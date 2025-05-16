@@ -17,7 +17,7 @@ public class Main {
         Car car4 = new Car("Audi", "B4", 2.6, 2013, "Black", Category.STATION_WAGON);
         Car car5 = new Car("Audi", "Q5", 3.0, 2018, "Green", Category.STATION_WAGON);
 
-        Connection connection = service.joiningToDBS(URL, USERNAME, PASSWORD);
+        System.out.println(service.joiningToDBS(URL, USERNAME, PASSWORD));
 
         /*service.insertCar(connection, car1);
         service.insertCar(connection, car2);
@@ -26,27 +26,27 @@ public class Main {
         service.insertCar(connection, car5);*/
 
 
-        service.showAllCars(connection);
-        service.showAllBrands(connection);
+        service.showAllCars();
+        service.showAllBrands();
         System.out.println("--------------");
-        service.showQuantityForBrands(connection);
+        service.showQuantityForBrands();
         System.out.println("--------------");
-        service.showCarsBetweenYears(connection, 2019, 2023);
+        service.showCarsBetweenYears(2019, 2023);
         System.out.println("--------------");
-        service.showCarsByCategory(connection, Category.STATION_WAGON);
+        service.showCarsByCategory(Category.STATION_WAGON);
         System.out.println("--------------");
-        service.deleteCar(connection, 3);
+        service.deleteCar(3);
         System.out.println("--------------");
-        service.updateCar(connection, "color", "DarkGrey", 1);
+        service.updateCar("color", "DarkGrey", 1);
         System.out.println("--------------");
-        service.updateCar(connection, "year", 2021, 2);
+        service.updateCar("year", 2021, 2);
         System.out.println("--------------");
-        service.updateCar(connection, "volume", 2.8, 4);
+        service.updateCar("volume", 2.8, 4);
         System.out.println("--------------");
 
-        service.showAllCars(connection);
+        service.showAllCars();
 
-        System.out.println(service.disablingToDBS(connection));
+        System.out.println(service.disablingToDBS());
 
     }
 }

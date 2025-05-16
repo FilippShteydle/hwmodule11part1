@@ -1,31 +1,35 @@
 package com.shteydle.top.practice;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CarsRepository {
-    ConnectToDBS connect;
+    private ConnectToDBS connect;
+    private Connection connection;
 
     private static final String INSERT = "INSERT INTO cars (brand, model, volume, year, color, category) VALUES (?, ?, ?, ?, ?, ?)";
 
-    public Connection joiningToDBS(String url, String username, String password) {
+    public String joiningToDBS(String url, String username, String password) {
         connect = new ConnectToDBS(url, username, password);
-        return connect.joiningToDBS();
+        connection = connect.joiningToDBS();
+        return "База подключена";
     }
 
-    public String disablingToDBS(Connection connection) {
+    public String disablingToDBS() {
         return connect.disablingToDBS(connection);
     }
 
-    public void showAllCars(Connection connection) {
+    public List<Car> showAllCars() {
         String selectAll = "select * from cars";
+        List<Car> cars = new ArrayList<>();
 
         try (PreparedStatement statement = connection.prepareStatement(selectAll)) {
 
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                System.out.println(new Car(resultSet.getString(2), resultSet.getString(3),
+                cars.add(new Car(resultSet.getString(2), resultSet.getString(3),
                         resultSet.getDouble(4), resultSet.getInt(5),
                         resultSet.getString(6), getCategory(resultSet.getString(7))));
             }
@@ -33,9 +37,10 @@ public class CarsRepository {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return cars;
     }
 
-    public void showAllBrands(Connection connection) {
+    public void showAllBrands() {
         String selectAll = "select distinct brand from cars";
 
         try (PreparedStatement statement = connection.prepareStatement(selectAll)) {
@@ -51,23 +56,25 @@ public class CarsRepository {
         }
     }
 
-    public void showQuantityForBrands(Connection connection) {
+    public List<String> showQuantityForBrands() {
         String selectBrand = "select brand, count(*) from cars group by brand";
+        List<String> countCars = new ArrayList<>();
 
         try (PreparedStatement statement = connection.prepareStatement(selectBrand)) {
 
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                System.out.println("Brand: " + resultSet.getString(1) + ", quantity cars: " + resultSet.getInt(2));
+                countCars.add("Brand: " + resultSet.getString(1) + ", quantity cars: " + resultSet.getInt(2));
             }
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return countCars;
     }
 
-    public void showCarsBetweenYears(Connection connection, int year1, int year2) {
+    public void showCarsBetweenYears(int year1, int year2) {
         String selectBetweenYear = "select * from cars where year between ? and ?";
 
         try (PreparedStatement statement = connection.prepareStatement(selectBetweenYear)) {
@@ -86,7 +93,7 @@ public class CarsRepository {
         }
     }
 
-    public void showCarsByCategory(Connection connection, String category) {
+    public void showCarsByCategory(String category) {
         String selectByCategory = "select * from cars where category = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(selectByCategory)) {
@@ -114,7 +121,7 @@ public class CarsRepository {
         return null;
     }
 
-    public void insertCar(Connection connection, Car car) {
+    public void insertCar(Car car) {
         try (PreparedStatement statement = connection.prepareStatement(INSERT)) {
             statement.setString(1, car.getBrand());
             statement.setString(2, car.getModel());
@@ -129,18 +136,18 @@ public class CarsRepository {
         }
     }
 
-    public void deleteCar(Connection connection, int id) {
+    public void deleteCar(int id) {
         String deleteCar = "delete from cars where id = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(deleteCar)) {
             statement.setInt(1, id);
-            ResultSet resultSet = statement.executeQuery();
+            statement.executeQuery();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public void updateCar(Connection connection, String column, String value, int id) {
+    public void updateCar(String column, String value, int id) {
         String updateCar = createRequest(column);
 
         try (PreparedStatement statement = connection.prepareStatement(updateCar)) {
@@ -152,7 +159,7 @@ public class CarsRepository {
         }
     }
 
-    public void updateCar(Connection connection, String column, int value, int id) {
+    public void updateCar(String column, int value, int id) {
         String updateCar = createRequest(column);
 
         try (PreparedStatement statement = connection.prepareStatement(updateCar)) {
@@ -164,7 +171,7 @@ public class CarsRepository {
         }
     }
 
-    public void updateCar(Connection connection, String column, double value, int id) {
+    public void updateCar(String column, double value, int id) {
         String updateCar = createRequest(column);
 
         try (PreparedStatement statement = connection.prepareStatement(updateCar)) {
